@@ -1,10 +1,10 @@
-////////////
+/////////////
 // Classes //
 /////////////
 
 class Product {
-  constructor(name, price, year) {
-    this.name = name;
+  constructor(prName, price, year) {
+    this.prName = prName;
     this.price = price;
     this.year = year;
   }
