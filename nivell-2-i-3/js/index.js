@@ -1,54 +1,68 @@
-////////////
+/////////////
 // Classes //
 /////////////
 
+let productStorageArray = [];
+
 class Product {
-  constructor(name, price, year) {
-    this.name = name;
-    this.price = price;
-    this.year = year;
+  constructor(prName, prPrice, prYear) {
+    this.prName = prName;
+    this.prPrice = prPrice;
+    this.prYear = prYear;
   }
-}
 
-class ProductActions {
   // Add Product method
-  static addProductToTable(product) {
-    const row = document.createElement("tr");
-
-    row.innerHTML = `
-      <td>${product.name}</td>
-      <td>${product.price}</td>
-      <td>${product.year}</td>
+  static AddProductToTable(product, ev) {
+    // Check if product exists
+    var flag = true;
+    productStorageArray.forEach(element => {
+      if (element.prName === product.prName) {
+        Product.AlertType("Product name is already in use", "warning");
+        // ev.target[0].value = '';
+        flag = false;
+      }
+    });
+    if (flag === true) {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+      <td>${product.prName}</td>
+      <td>${product.prPrice}</td>
+      <td>${product.prYear}</td>
       <td><button class="btn btn-danger btn-sm delete">Delete</button></td>
       `;
-    
-    productTableBody.appendChild(row);
-    ProductActions.alertType("Product added succesfully", "success");
-  }
-
-  // Delete Product method
-  static deleteProductFromTable(el) {
-    // Remove product only if the click comes from a Delete button
-    if (el.classList.contains("delete")) {
-      el.parentElement.parentElement.remove();
-      ProductActions.alertType("Product deleted form list", "danger");
+      productTableBody.appendChild(row);
+      productStorageArray.push(product);
+      Product.AlertType("Product added succesfully", "success");
     }
   }
-  //  Clear Form Fields method
-  static clearForm(name, price, year) {
-    name.value = "";
-    price.value = "";
-    year.value = "";
+  // Delete Product method
+  static DeleteProductFromTable(el) {
+    // Remove product only if the click comes from a Delete button
+    
+    if (el.classList.contains("delete")) {
+      for (let element in productStorageArray) {
+       if (productStorageArray[element].prName === el.parentElement.parentElement.firstElementChild.innerHTML) {
+        productStorageArray.splice(element, 1);
+              }
+    }
+    
+    // if (el.classList.contains("delete")) {
+    //     for (let element in productStorageArray) {
+    //      if (productStorageArray[element].prName === el.parentElement.parentElement.firstElementChild.innerHTML) {
+    //       delete productStorageArray[element];
+    //             }
+    //   }
+      el.parentElement.parentElement.remove();
+      Product.AlertType("Product deleted form list", "danger");
+    }
   }
   // Show Alert type (success, warning, danger)
-  static alertType(message, type) {
-    const div = document.createElement("div");
-    div.className = `alert alert-${type}`;
-    div.appendChild(document.createTextNode(message));
-    mainContainer.insertBefore(div, formContainer);
-
-    // Vanish in 3 seconds
-    setTimeout(() => document.querySelector(".alert").remove(), 3000);
+  static AlertType(message, type) {
+    alertContainer.className = `alert alert-${type} mb-4`;
+    alertContainer.innerHTML = (message);
+    alertContainer.style.visibility = 'visible';
+    // Vanish in 2 seconds
+    setTimeout(() => alertContainer.style.visibility = 'hidden', 2000);
   }
 }
 
@@ -57,29 +71,25 @@ class ProductActions {
 /////////////////////
 
 // Add Product Event
-productForm.addEventListener("submit", (e) => {
-  // Prevent submit and get form values
-  e.preventDefault();
-  const name = document.querySelector("#name");
-  const price = document.querySelector("#price");
-  const year = document.querySelector("#year");
-
+productForm.addEventListener('submit', (ev) => {
+  // Prevent submit
+  ev.preventDefault();
   // Validate form, if a field is empty show warning alert
-  if (name.value === "" || price.value === "" || year.value === "") {
-    ProductActions.alertType("All fields need to be filled", "warning");
+  if (ev.target[0].value === '' || ev.target[1].value === '' || ev.target[2].value === '') {
+    Product.AlertType("All fields need to be filled", "warning");
   } else {
     // Instatiate product Object
-    const product = new Product(name.value, price.value, year.value);
-
+    const newProduct = new Product(prName.value, prPrice.value, prYear.value);
     // Add product to product table
-    ProductActions.addProductToTable(product);
-
-    // Clear Form fields
-    ProductActions.clearForm(name, price, year);
+    Product.AddProductToTable(newProduct, ev);
+    // Clear Form after success adding new product
+    for (let n = 0; n < 3; n++) {
+      ev.target[n].value = '';
+    }
   }
 });
 
 // Delete Product Event
-productTableBody.addEventListener("click", (e) => {
-  ProductActions.deleteProductFromTable(e.target);
+productTableBody.addEventListener("click", (ev) => {
+  Product.DeleteProductFromTable(ev.target);
 });
