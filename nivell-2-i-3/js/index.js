@@ -1,8 +1,12 @@
+///////////////
+// Variables //
+///////////////
+
+let productStorageArray = [];
+
 /////////////
 // Classes //
 /////////////
-
-let productStorageArray = [];
 
 class Product {
   constructor(prName, prPrice, prYear) {
@@ -38,20 +42,12 @@ class Product {
   // Delete Product method
   static DeleteProductFromTable(el) {
     // Remove product only if the click comes from a Delete button
-    
     if (el.classList.contains("delete")) {
       for (let element in productStorageArray) {
-       if (productStorageArray[element].prName === el.parentElement.parentElement.firstElementChild.innerHTML) {
-        productStorageArray.splice(element, 1);
-              }
-    }
-    
-    // if (el.classList.contains("delete")) {
-    //     for (let element in productStorageArray) {
-    //      if (productStorageArray[element].prName === el.parentElement.parentElement.firstElementChild.innerHTML) {
-    //       delete productStorageArray[element];
-    //             }
-    //   }
+        if (productStorageArray[element].prName === el.parentElement.parentElement.firstElementChild.innerHTML) {
+          productStorageArray.splice(element, 1);
+        }
+      }
       el.parentElement.parentElement.remove();
       Product.AlertType("Product deleted form list", "danger");
     }
@@ -82,7 +78,7 @@ productForm.addEventListener('submit', (ev) => {
     const newProduct = new Product(prName.value, prPrice.value, prYear.value);
     // Add product to product table
     Product.AddProductToTable(newProduct, ev);
-    // Clear Form after success adding new product
+    // Clear Form after adding new product
     for (let n = 0; n < 3; n++) {
       ev.target[n].value = '';
     }
